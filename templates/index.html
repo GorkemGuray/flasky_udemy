@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Anasayfa
+{% endblock title %}
+
+
+{% block body %}
+    <div class="jumbotron text-center">
+        <h3>Anasayfa</h3>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Provident enim neque necessitatibus doloremque sequi optio maxime molestiae ullam reprehenderit libero, corporis odio, a similique corrupti illo cumque obcaecati fuga. Eaque.</p>
+    </div>
+
+        {% for article in articles %}
+            <div class="card w-100 bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">{{article.title}}</h5>
+                    <h6 class="card-subtitle">{{article.id}}</h6>
+                    <p class="card-text">{{article.content}}</p>
+                    <a href="#" class="btn btn-primary">Button</a>
+                </div>
+            </div>
+            <hr/>
+        
+        {% endfor %}
+
+
+
+{% endblock body %}
