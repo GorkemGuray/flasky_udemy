@@ -49,6 +49,11 @@ def index():
 def about():
     return render_template("about.html")
 
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template("dashboard.html")
+
 @app.route('/article/<string:id>')
 def article(id):
     return "Article id:" + id
@@ -94,11 +99,13 @@ def login():
         if result > 0:
             data = cursor.fetchone()
             real_password = data["password"]
+            name = data["name"]
 
             if sha256_crypt.verify(password_entered, real_password):
                 flash(message="Başarıyla giriş yaptınız...", category="success")
                 session["logged_in"] = True
                 session["username"] = username
+                session["name"] = name
                 return redirect(url_for("index"))
             else:
                 flash(message="Parola yanlış...", category="danger")
