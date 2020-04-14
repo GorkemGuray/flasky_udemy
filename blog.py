@@ -2,6 +2,19 @@ from flask import Flask,render_template,flash,redirect,url_for,session,logging,r
 from flask_mysqldb import MySQL
 from wtforms import Form,StringField,TextAreaField,PasswordField,validators
 from passlib.hash import sha256_crypt
+from functools import wraps
+
+#Kullanıcı giris decorator'ı
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "logged_in" in session:
+            return f(*args, **kwargs)
+        else:
+            flash(message="Bu sayfayı görmeye yetkiniz yok...", category="warning")
+            return redirect(url_for("login"))
+    return decorated_function
+
 
 #Kullanıcı kayıt formu
 class RegisterForm(Form):
@@ -14,7 +27,7 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField("Parola Doğrula")
 
-
+#Kullanıcı giriş formu
 class LoginForm(Form):
     username = StringField("Kullanıcı adı")
     password = PasswordField("Parola")
@@ -44,20 +57,22 @@ def index():
         {"id":3, "title":"Deneme3", "content":"Deneme 3 içerik"}
     ]
     return render_template("index.html", articles=articles)
-
+#Hakkımda sayfası
 @app.route('/about')
 def about():
     return render_template("about.html")
 
-
+#Kontrol Paneli
 @app.route('/dashboard')
+@login_required
 def dashboard():
     return render_template("dashboard.html")
-
+#Makaleler
 @app.route('/article/<string:id>')
 def article(id):
     return "Article id:" + id
 
+#Kullanıcı kayıt sayfası
 @app.route('/register',methods=['GET','POST'])
 def register():
     form = RegisterForm(request.form)
@@ -82,6 +97,7 @@ def register():
     else:
         return render_template("register.html", form=form)
 
+#Kullanıcı giriş sayfası
 @app.route('/login',methods=["GET","POST"])
 def login():
 
@@ -117,6 +133,7 @@ def login():
 
     return render_template("login.html",form=form)
 
+#Kullanıcı çıkış sayfası
 @app.route('/logout')
 def logout():
     session.clear()
