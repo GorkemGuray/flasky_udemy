@@ -32,6 +32,11 @@ class LoginForm(Form):
     username = StringField("Kullanıcı adı")
     password = PasswordField("Parola")
 
+#Makale ekleme formu
+class ArticleForm(Form):
+    title = StringField("Makale Başlığı", validators=[validators.length(max=255)])
+    content = TextAreaField("Makale", validators=[validators.length(min=10)])
+
  
 
 
@@ -139,6 +144,14 @@ def logout():
     session.clear()
     flash(message="Çıkış yapıldı.", category="success")
     return redirect(url_for("index"))
+
+
+#Makale ekleme
+@app.route('/addarticle', methods=["GET", "POST"])
+@login_required
+def addarticle():
+    form = ArticleForm(request.form)
+    return render_template("addarticle.html",form=form)
 
 
 if __name__ == '__main__':
