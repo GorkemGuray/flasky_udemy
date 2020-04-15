@@ -82,7 +82,15 @@ def articles():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * from articles where author = %s"
+    result = cursor.execute(sorgu,(session["username"],))
+
+    if result > 0:
+        articles = cursor.fetchall()
+        return render_template('dashboard.html',articles=articles)
+    else:
+        return render_template("dashboard.html")
 #Makaleler
 @app.route('/article/<string:id>')
 def article(id):
@@ -169,7 +177,7 @@ def addarticle():
 
         cursor = mysql.connection.cursor()
         sorgu = "Insert into articles (title,author,content) values(%s,%s,%s)"
-        cursor.execute(sorgu,(title, session["name"],content,))
+        cursor.execute(sorgu,(title, session["username"],content,))
         mysql.connection.commit()
         cursor.close()
 
