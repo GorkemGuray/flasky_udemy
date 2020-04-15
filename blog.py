@@ -76,6 +76,19 @@ def articles():
     else:
         return render_template("articles.html")
 
+#Makale detay sayfası
+@app.route('/article/<string:id>')
+def single_article(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * from articles where id = %s"
+
+    result = cursor.execute(sorgu, (id,))
+
+    if result > 0:
+        article = cursor.fetchone()
+        return render_template("single_article.html", article=article)
+    else:
+        return render_template("single_article.html")
     
 
 #Kontrol Paneli
