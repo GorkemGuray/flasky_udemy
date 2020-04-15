@@ -56,16 +56,27 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    articles = [
-        {"id":1, "title":"Deneme1", "content":"Deneme 1 içerik"},
-        {"id":2, "title":"Deneme2", "content":"Deneme 2 içerik"},
-        {"id":3, "title":"Deneme3", "content":"Deneme 3 içerik"}
-    ]
-    return render_template("index.html", articles=articles)
+    return render_template("index.html")
 #Hakkımda sayfası
 @app.route('/about')
 def about():
     return render_template("about.html")
+
+#Makaleler sayfası
+@app.route('/articles')
+def articles():
+    cursor = mysql.connection.cursor()
+
+    sorgu = "Select * from articles"
+    result = cursor.execute(sorgu)
+
+    if result > 0:
+        articles = cursor.fetchall()
+        return render_template("articles.html",articles = articles)
+    else:
+        return render_template("articles.html")
+
+    
 
 #Kontrol Paneli
 @app.route('/dashboard')
