@@ -200,6 +200,25 @@ def addarticle():
 
     return render_template("addarticle.html",form=form)
 
+#Makale Silme
+@app.route('/delete/<string:id>')
+@login_required
+def delete(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * from articles where author = %s and id= %s"
+    sorgu2 = "Delete from articles where id = %s"
+
+    result = cursor.execute(sorgu,(session["username"],id))
+
+    if result>0:
+        cursor.execute(sorgu2,(id,))
+        mysql.connection.commit()
+        cursor.close()
+        flash(message="{} \'nolu makale başarıyla silinidi...".format(id),category="success")
+        return redirect(url_for("dashboard"))
+    else:
+        flash(message="Böyle bir makale yok veya bu işleme yetkiniz yok.", category="danger")
+        return redirect(url_for("index"))
 
 if __name__ == '__main__':
     app.run(debug=True)
