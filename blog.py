@@ -256,6 +256,28 @@ def edit(id):
         flash(message="{} \'nolu makale başarıyla güncellendi...".format(id), category="success")
         return redirect(url_for("dashboard"))
 
+#Arma URL
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method =="POST":
+        keyword = request.form.get("keyword")
+
+        cursor = mysql.connection.cursor()
+        sorgu = "Select * from articles where title like '%{}%'"
+
+        result = cursor.execute(sorgu.format(keyword))
+
+        if result==0:
+            cursor.close()
+            flash(message="Sonuç yok...",category="warning")
+            return redirect(url_for("articles"))
+        else:
+            articles = cursor.fetchall()
+            cursor.close()
+            return render_template("articles.html",articles=articles)
+    else: 
+        return redirect(url_for("index"))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
